@@ -36,7 +36,9 @@ public class Stock
     
     @Override
     public String toString(){
-        return companyName;
+        // "Company: qty shares" (i.e., "Apple: 10 shares)
+        
+        return companyName + ": " + this.numberOfShares + " shares";
     }
     // getters and setters
     public String getCompanyName() {

@@ -1,5 +1,6 @@
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -29,6 +30,9 @@ public class Stocks4UGUI extends javax.swing.JFrame {
 
         //set form to center of screen
         this.setLocationRelativeTo(null);
+        
+        //calculate total portfolio value
+        calculateTotalValue();
 
     }
 
@@ -45,8 +49,9 @@ public class Stocks4UGUI extends javax.swing.JFrame {
         pnlStockList = new javax.swing.JPanel();
         scrStocks = new javax.swing.JScrollPane();
         lstStocks = new javax.swing.JList<>();
-        lblProfitLoss = new javax.swing.JLabel();
+        lblTotalValue = new javax.swing.JLabel();
         btnRemoveStock = new javax.swing.JButton();
+        lblProfitLoss = new javax.swing.JLabel();
         pnlAddStock = new javax.swing.JPanel();
         lblStockName = new javax.swing.JLabel();
         txtStockName = new javax.swing.JTextField();
@@ -57,6 +62,12 @@ public class Stocks4UGUI extends javax.swing.JFrame {
         txtCurrentPrice = new javax.swing.JTextField();
         lblCurrentPrice = new javax.swing.JLabel();
         btnAddStock = new javax.swing.JButton();
+        mnbMainMenu = new javax.swing.JMenuBar();
+        mnuFile = new javax.swing.JMenu();
+        mniOpen = new javax.swing.JMenuItem();
+        mniSave = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        mniExit = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Stocks4U App");
@@ -72,8 +83,8 @@ public class Stocks4UGUI extends javax.swing.JFrame {
         });
         scrStocks.setViewportView(lstStocks);
 
-        lblProfitLoss.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lblProfitLoss.setText("Profit / Loss");
+        lblTotalValue.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblTotalValue.setText("Total Value:");
 
         btnRemoveStock.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         btnRemoveStock.setText("Remove Stock");
@@ -83,22 +94,27 @@ public class Stocks4UGUI extends javax.swing.JFrame {
             }
         });
 
+        lblProfitLoss.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblProfitLoss.setText("Profit / Loss");
+
         javax.swing.GroupLayout pnlStockListLayout = new javax.swing.GroupLayout(pnlStockList);
         pnlStockList.setLayout(pnlStockListLayout);
         pnlStockListLayout.setHorizontalGroup(
             pnlStockListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlStockListLayout.createSequentialGroup()
+                .addContainerGap(269, Short.MAX_VALUE)
+                .addComponent(btnRemoveStock)
+                .addGap(213, 213, 213))
             .addGroup(pnlStockListLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlStockListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scrStocks)
                     .addGroup(pnlStockListLayout.createSequentialGroup()
-                        .addComponent(lblProfitLoss, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(pnlStockListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTotalValue, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblProfitLoss, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlStockListLayout.createSequentialGroup()
-                .addContainerGap(215, Short.MAX_VALUE)
-                .addComponent(btnRemoveStock)
-                .addGap(213, 213, 213))
         );
         pnlStockListLayout.setVerticalGroup(
             pnlStockListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -109,7 +125,9 @@ public class Stocks4UGUI extends javax.swing.JFrame {
                 .addComponent(lblProfitLoss)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRemoveStock)
-                .addContainerGap(84, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(lblTotalValue)
+                .addContainerGap(130, Short.MAX_VALUE))
         );
 
         jtpMainTabs.addTab("List", pnlStockList);
@@ -164,7 +182,7 @@ public class Stocks4UGUI extends javax.swing.JFrame {
                         .addComponent(lblStockName, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtStockName, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 120, Short.MAX_VALUE))
+                .addGap(0, 174, Short.MAX_VALUE))
             .addGroup(pnlAddStockLayout.createSequentialGroup()
                 .addGap(205, 205, 205)
                 .addComponent(btnAddStock)
@@ -191,10 +209,41 @@ public class Stocks4UGUI extends javax.swing.JFrame {
                     .addComponent(txtCurrentPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnAddStock)
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(161, Short.MAX_VALUE))
         );
 
         jtpMainTabs.addTab("Add Stock", pnlAddStock);
+
+        mnuFile.setText("File");
+
+        mniOpen.setText("Open");
+        mniOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniOpenActionPerformed(evt);
+            }
+        });
+        mnuFile.add(mniOpen);
+
+        mniSave.setText("Save");
+        mniSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniSaveActionPerformed(evt);
+            }
+        });
+        mnuFile.add(mniSave);
+        mnuFile.add(jSeparator1);
+
+        mniExit.setText("Exit");
+        mniExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniExitActionPerformed(evt);
+            }
+        });
+        mnuFile.add(mniExit);
+
+        mnbMainMenu.add(mnuFile);
+
+        setJMenuBar(mnbMainMenu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -202,14 +251,14 @@ public class Stocks4UGUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jtpMainTabs)
+                .addComponent(jtpMainTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jtpMainTabs)
+                .addComponent(jtpMainTabs, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -274,6 +323,8 @@ public class Stocks4UGUI extends javax.swing.JFrame {
         Stock stk = new Stock(stockName, quantity, purchasePrice, currentPrice);
         // add the Stock object to the JList's model
         model.addElement(stk);
+        //update total value
+        calculateTotalValue();
         
         //reset form for the next stock
         txtStockName.setText("");
@@ -307,9 +358,53 @@ public class Stocks4UGUI extends javax.swing.JFrame {
         // if selected, remove the stock
         if(position >= 0){
             model.remove(position);
-            lblProfitLoss.setText("Profit / Loss");
+            lblTotalValue.setText("Profit / Loss");
+        //update total value
+        calculateTotalValue();        
         }
     }//GEN-LAST:event_btnRemoveStockActionPerformed
+
+    private void mniExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniExitActionPerformed
+        // Exits application
+        System.exit(0);
+    }//GEN-LAST:event_mniExitActionPerformed
+
+    private void mniSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniSaveActionPerformed
+        // get file name
+        String fileName = JOptionPane.showInputDialog("Enter filename: ");
+        
+        
+        // save data to the file
+        StockIO outToFile = new StockIO(fileName);
+        
+        ArrayList<Stock> data = new ArrayList<Stock>();
+        
+        for(int i = 0; i < model.size();i++){
+            Stock stk = model.elementAt(i);
+            data.add(stk);
+        }
+        
+        outToFile.saveData(data);
+        JOptionPane.showMessageDialog(this, "Data was saved to the file!");
+    }//GEN-LAST:event_mniSaveActionPerformed
+
+    private void mniOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniOpenActionPerformed
+        //  get the file name
+        String fileName = JOptionPane.showInputDialog("Enter filename: ");
+        
+        // get data from the file
+        StockIO inFromFile = new StockIO(fileName);
+        
+        ArrayList<Stock> data = inFromFile.getData();
+        
+        //clear the model and then copy the new data to the model
+        model.clear();
+        for(int i =0; i<data.size();i++){
+            Stock stk = data.get(i);
+            model.addElement(stk);
+        }
+        calculateTotalValue();
+    }//GEN-LAST:event_mniOpenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -349,13 +444,20 @@ public class Stocks4UGUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddStock;
     private javax.swing.JButton btnRemoveStock;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTabbedPane jtpMainTabs;
     private javax.swing.JLabel lblCurrentPrice;
     private javax.swing.JLabel lblProfitLoss;
     private javax.swing.JLabel lblPurchasePrice;
     private javax.swing.JLabel lblQuantity;
     private javax.swing.JLabel lblStockName;
+    private javax.swing.JLabel lblTotalValue;
     private javax.swing.JList<Stock> lstStocks;
+    private javax.swing.JMenuBar mnbMainMenu;
+    private javax.swing.JMenuItem mniExit;
+    private javax.swing.JMenuItem mniOpen;
+    private javax.swing.JMenuItem mniSave;
+    private javax.swing.JMenu mnuFile;
     private javax.swing.JPanel pnlAddStock;
     private javax.swing.JPanel pnlStockList;
     private javax.swing.JScrollPane scrStocks;
@@ -364,5 +466,20 @@ public class Stocks4UGUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtQuantity;
     private javax.swing.JTextField txtStockName;
     // End of variables declaration//GEN-END:variables
+
+    private void calculateTotalValue() {
+        //calculates total value of stocks
+        double totalValue = 0.0;
+        
+        // go through each stock in portfolio and calculate the total value
+        for(int i = 0;i<model.size();i++){
+            Stock stk = model.elementAt(i);
+            totalValue += stk.getCurrentPrice() * stk.getNumberOfShares();
+        }
+        
+        //show total value
+        DecimalFormat fmt = new DecimalFormat("$#,##0.00");
+        lblTotalValue.setText("Total Value: "+ fmt.format(totalValue));
+    }
 
 }
